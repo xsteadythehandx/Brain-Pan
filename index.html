@@ -197,9 +197,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .comp-desc{color:var(--muted)}
 .comp-desc strong{color:var(--ink)}
 .paste-label{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:7px}
-.paste-area{width:100%;min-height:180px;padding:14px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.84rem;background:var(--paper);color:var(--ink);outline:none;resize:vertical;line-height:1.6;transition:border-color .2s}
+.paste-area{width:100%;min-height:180px;padding:14px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.84rem;background:var(--paper);color:var(--ink);outline:none;resize:vertical;line-height:1.6;transition:border-color .2s;
+  /* Mobile paste fix */
+  -webkit-user-select:text;user-select:text;
+  -webkit-touch-callout:default;touch-action:auto;
+  cursor:text;pointer-events:all;}
 .paste-area:focus{border-color:var(--rust)}
 .paste-area::placeholder{color:var(--muted)}
+.clipboard-btn{width:100%;padding:16px;background:var(--rust);border:none;border-radius:12px;color:white;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s,transform .1s;margin-bottom:10px;letter-spacing:.2px}
+.clipboard-btn:hover{background:var(--rust-dark);transform:translateY(-1px)}
+.clipboard-btn:active{transform:translateY(0)}
+.or-label{text-align:center;font-size:.75rem;color:var(--muted);margin-bottom:10px;letter-spacing:.3px}
+.paste-btn-row{display:flex;gap:8px;margin-bottom:8px}
+.paste-btn{flex:1;padding:10px;border:1.5px dashed var(--border);border-radius:10px;background:var(--paper);font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--muted);cursor:pointer;transition:all .2s;text-align:center}
+.paste-btn:hover{border-color:var(--rust);color:var(--rust);background:var(--rust-light)}
 .parse-btn{width:100%;padding:13px;background:var(--rust);border:none;border-radius:10px;color:white;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;margin-top:12px}
 .parse-btn:hover{background:var(--rust-dark)}
 .status-bar{font-size:.82rem;padding:10px 14px;border-radius:8px;margin-top:10px;display:none}
@@ -334,8 +345,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
     <div class="settings-card" style="grid-column:1/-1">
       <h3>➕ Add Your Own Recipe</h3>
       <p>Find a recipe online, copy the full page text, and paste it below. The app will pull out the title, ingredients, and steps automatically — no account or internet connection needed.</p>
-      <label class="paste-label">Paste recipe text here</label>
-      <textarea class="paste-area" id="paste-area" placeholder="Paste any recipe text here…&#10;&#10;Include the title, ingredient list, and instructions. The more complete the text, the better the result."></textarea>
+      <button class="clipboard-btn" id="clipboard-btn" onclick="pasteFromClipboard()">📋 Paste from Clipboard</button>
+      <p class="or-label">— or tap and hold inside the box below to paste manually —</p>
+      <textarea class="paste-area" id="paste-area" placeholder="Recipe text will appear here…"></textarea>
       <div class="status-bar" id="add-status"></div>
       <button class="parse-btn" onclick="parseRecipe()">✨ Parse & Add Recipe</button>
       <div id="custom-section" style="display:none;margin-top:20px">
@@ -1096,6 +1108,30 @@ function renderEquipChecklist() {
 function toggleEquip(k) { ownedEquip.has(k) ? ownedEquip.delete(k) : ownedEquip.add(k); save(); renderEquipChecklist(); updateEquipBanner(); renderCookbook(); }
 function selectAllEquip() { Object.values(EQUIP_CATS).flat().forEach(k => ownedEquip.add(k)); save(); renderEquipChecklist(); updateEquipBanner(); renderCookbook(); }
 function clearAllEquip() { ownedEquip.clear(); save(); renderEquipChecklist(); updateEquipBanner(); renderCookbook(); }
+
+async function pasteFromClipboard() {
+  const btn = document.getElementById('clipboard-btn');
+  try {
+    const text = await navigator.clipboard.readText();
+    if (!text || !text.trim()) {
+      setStatus('error', "Your clipboard appears to be empty. Copy the recipe text first, then tap Paste.");
+      return;
+    }
+    document.getElementById('paste-area').value = text;
+    btn.textContent = '✅ Pasted! Now tap Parse & Add Recipe below.';
+    btn.style.background = 'var(--sage)';
+    setTimeout(() => {
+      btn.textContent = '📋 Paste from Clipboard';
+      btn.style.background = '';
+    }, 4000);
+  } catch (err) {
+    // Clipboard API denied - fall back to focusing textarea for manual paste
+    const area = document.getElementById('paste-area');
+    area.focus();
+    area.select();
+    setStatus('error', "Couldn't access clipboard automatically. Tap inside the text box below, then tap Paste.");
+  }
+}
 
 // Show compact logo in navbar once title scrolls away
 (function() {
