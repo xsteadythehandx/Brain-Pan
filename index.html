@@ -34,10 +34,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .search-box:focus{border-color:var(--rust)}
 .filter-group{margin-bottom:18px}
 .filter-label{display:block;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:9px}
-.tag-grid{display:flex;flex-wrap:wrap;gap:5px}
-.tag-btn{padding:3px 9px;border-radius:20px;border:1.5px solid var(--border);background:none;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
-.tag-btn:hover{border-color:var(--rust);color:var(--rust)}
-.tag-btn.active{background:var(--rust);border-color:var(--rust);color:white}
+.filter-select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.84rem;background:var(--paper);color:var(--ink);outline:none;cursor:pointer;transition:border-color .2s;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238c7b6a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.filter-select:focus{border-color:var(--rust)}
+.filter-select:hover{border-color:var(--muted)}
 .complexity-slider{width:100%;accent-color:var(--rust)}
 .complexity-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:4px}
 .clear-btn{width:100%;padding:7px;border:1.5px solid var(--border);background:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--muted);cursor:pointer;transition:all .2s;margin-top:2px}
@@ -221,6 +220,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 .custom-row span{flex:1}
 .custom-row button{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.9rem;padding:2px 6px;border-radius:4px;transition:all .15s}
 .custom-row button:hover{background:var(--rust-light);color:var(--rust)}
+.card-hide-btn{position:absolute;bottom:10px;right:10px;background:rgba(255,255,255,.9);border:1.5px solid var(--border);border-radius:6px;color:var(--muted);font-size:.7rem;cursor:pointer;padding:2px 7px;transition:all .2s;line-height:1.6}
+.card-hide-btn:hover{background:var(--rust);border-color:var(--rust);color:white}
+@media(hover:hover){.card-hide-btn{opacity:0}.recipe-card:hover .card-hide-btn{opacity:1}}
+.recipe-card{position:relative}
+.hidden-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--cream);font-size:.85rem}
+.hidden-emoji{font-size:1.1rem;flex-shrink:0}
+.hidden-name{flex:1;color:var(--muted);font-style:italic}
+.restore-btn{padding:4px 12px;border:1.5px solid var(--sage);border-radius:6px;background:none;color:var(--sage);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s}
+.restore-btn:hover{background:var(--sage);color:white}
 .empty{text-align:center;padding:50px 20px;color:var(--muted)}
 .empty .icon{font-size:2.8rem;margin-bottom:10px}
 .empty h4{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ink);margin-bottom:5px}
@@ -279,14 +287,65 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
         <span id="equip-toggle-lbl" style="font-size:.73rem;color:var(--muted)">Hiding missing</span>
       </div>
       <div class="filter-group">
-        <span class="filter-label">Cuisine & Type</span>
-        <div class="tag-grid" id="tag-filters"></div>
+        <span class="filter-label">Cuisine</span>
+        <select class="filter-select" id="filter-cuisine" onchange="renderCookbook()">
+          <option value="">All cuisines</option>
+          <option value="american">🍔 American</option>
+          <option value="cajun">🦐 Cajun</option>
+          <option value="chinese">🥟 Chinese</option>
+          <option value="filipino">🍚 Filipino</option>
+          <option value="french">🥖 French</option>
+          <option value="greek">🫒 Greek</option>
+          <option value="indian">🍛 Indian</option>
+          <option value="italian">🍝 Italian</option>
+          <option value="korean">🥢 Korean</option>
+          <option value="lebanese">🧄 Lebanese</option>
+          <option value="mediterranean">🐟 Mediterranean</option>
+          <option value="mexican">🌮 Mexican</option>
+          <option value="russian">🫕 Russian</option>
+          <option value="thai">🌿 Thai</option>
+        </select>
       </div>
       <div class="filter-group">
-        <span class="filter-label">Max Complexity (1–5)</span>
-        <input type="range" class="complexity-slider" id="complexity-filter" min="1" max="5" value="5"
-          oninput="renderCookbook();document.getElementById('comp-val').textContent=this.value">
-        <div class="complexity-labels"><span>Easy</span><span id="comp-val">5</span><span>Expert</span></div>
+        <span class="filter-label">Protein</span>
+        <select class="filter-select" id="filter-protein" onchange="renderCookbook()">
+          <option value="">All proteins</option>
+          <option value="chicken">🍗 Chicken</option>
+          <option value="beef">🥩 Beef</option>
+          <option value="pork">🥓 Pork</option>
+          <option value="seafood">🐟 Seafood</option>
+          <option value="eggs">🥚 Eggs</option>
+          <option value="vegetarian">🥗 Vegetarian</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Meal Type</span>
+        <select class="filter-select" id="filter-meal" onchange="renderCookbook()">
+          <option value="">Any meal</option>
+          <option value="breakfast">🍳 Breakfast</option>
+          <option value="dinner">🍽️ Dinner</option>
+          <option value="soup">🍲 Soup</option>
+          <option value="dessert">🍰 Dessert</option>
+          <option value="sauce/condiment">🫙 Sauce / Condiment</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Diet</span>
+        <select class="filter-select" id="filter-diet" onchange="renderCookbook()">
+          <option value="">No restriction</option>
+          <option value="vegetarian">🥗 Vegetarian</option>
+          <option value="keto">⚡ Keto</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Max Complexity</span>
+        <select class="filter-select" id="complexity-filter" onchange="renderCookbook();document.getElementById('comp-val').textContent=this.value">
+          <option value="5">Any difficulty</option>
+          <option value="1">1 – Easy only</option>
+          <option value="2">2 – Simple &amp; under</option>
+          <option value="3">3 – Moderate &amp; under</option>
+          <option value="4">4 – Advanced &amp; under</option>
+        </select>
       </div>
       <button class="clear-btn" onclick="clearFilters()">Clear all filters</button>
     </div>
@@ -354,6 +413,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
         <div style="font-family:'Playfair Display',serif;font-size:.93rem;font-weight:700;color:var(--rust);margin-bottom:10px;padding-bottom:6px;border-bottom:1.5px solid var(--cream)">Your Added Recipes</div>
         <div class="custom-list" id="custom-list"></div>
       </div>
+    </div>
+    <div class="settings-card" style="grid-column:1/-1;display:none" id="hidden-section">
+      <h3>👻 Hidden Recipes <span id="hidden-count" style="font-size:.75rem;font-weight:500;color:var(--muted);margin-left:6px"></span></h3>
+      <p>Recipes you've hidden from the Cookbook. Restore any time — nothing is permanently deleted from the app.</p>
+      <div id="hidden-list"></div>
+      <button class="clear-btn" style="margin-top:12px" onclick="restoreAllRecipes()">Restore All</button>
     </div>
     <div class="settings-card" style="grid-column:1/-1">
       <h3>🍳 Kitchen Equipment</h3>
@@ -458,9 +523,9 @@ const SPICE_KW = ['salt','pepper','spice','cumin','paprika','oregano','thyme','c
 const SECTION_PAT = /^(For the |Pie |Flaky |Egg Wash|Quesabirria|Sauce:|Dough:|Filling:|Crust:|Topping:|Garnish:|Dressing:|Brine:|Marinade:|Glaze:)/;
 
 // ── State ──
-let activeTags = new Set();
 let pantryItems = [];
 let ownedEquip = new Set();
+let hiddenRecipes = new Set();
 let unitPref = 'imperial';
 let customRecipes = [];
 let currentRecipeId = null;
@@ -483,6 +548,7 @@ window.addEventListener('DOMContentLoaded', () => {
   buildLearnNav();
   showLearnTopic(LEARN_DATA[0].id);
   setupScrollHeader();
+  renderHiddenList();
 });
 
 function loadState() {
@@ -491,6 +557,7 @@ function loadState() {
     const e = localStorage.getItem('rp_equip'); if (e) ownedEquip = new Set(JSON.parse(e));
     const u = localStorage.getItem('rp_units'); if (u) unitPref = u;
     const c = localStorage.getItem('rp_custom'); if (c) customRecipes = JSON.parse(c);
+    const h = localStorage.getItem('rp_hidden'); if (h) hiddenRecipes = new Set(JSON.parse(h));
   } catch(_) {}
 }
 
@@ -499,6 +566,7 @@ function save() {
   localStorage.setItem('rp_equip', JSON.stringify([...ownedEquip]));
   localStorage.setItem('rp_units', unitPref);
   localStorage.setItem('rp_custom', JSON.stringify(customRecipes));
+  localStorage.setItem('rp_hidden', JSON.stringify([...hiddenRecipes]));
 }
 
 // ── Scroll header ──
@@ -618,26 +686,15 @@ function compLabel(c) { return ['','Easy','Simple','Moderate','Advanced','Expert
 function scoreColor(p) { return p >= 80 ? '#2d7c4a' : p >= 60 ? '#c4952a' : p >= 40 ? '#c4542a' : '#8c7b6a'; }
 
 // ── Cookbook ──
-function buildTagFilters() {
-  const all = new Set();
-  allRecipes().forEach(r => r.tags.forEach(t => all.add(t)));
-  document.getElementById('tag-filters').innerHTML = [...all].sort().map(t =>
-    `<button class="tag-btn" data-tag="${t}" onclick="toggleTag('${t}')">${EMOJI_MAP[t] || ''} ${t}</button>`
-  ).join('');
-}
-
-function toggleTag(tag) {
-  activeTags.has(tag) ? activeTags.delete(tag) : activeTags.add(tag);
-  document.querySelectorAll('.tag-btn').forEach(b => b.classList.toggle('active', activeTags.has(b.dataset.tag)));
-  renderCookbook();
-}
+function buildTagFilters() { /* dropdowns now, no-op */ }
+function toggleTag() {}
 
 function clearFilters() {
-  activeTags.clear();
-  document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('search-input').value = '';
   document.getElementById('complexity-filter').value = 5;
-  document.getElementById('comp-val').textContent = 5;
+  ['filter-cuisine','filter-protein','filter-meal','filter-diet'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
   renderCookbook();
 }
 
@@ -653,16 +710,25 @@ function updateEquipBanner() {
 
 function renderCookbook() {
   const q = document.getElementById('search-input').value.toLowerCase().trim();
-  const mc = parseInt(document.getElementById('complexity-filter').value);
+  const mc = parseInt(document.getElementById('complexity-filter').value) || 5;
   const strictEl = document.getElementById('equip-strict-toggle');
   const strict = strictEl ? strictEl.checked : false;
   const lbl = document.getElementById('equip-toggle-lbl');
   if (lbl) lbl.textContent = strict ? 'Hiding missing' : 'Flagging missing';
 
+  const fCuisine = document.getElementById('filter-cuisine')?.value || '';
+  const fProtein = document.getElementById('filter-protein')?.value || '';
+  const fMeal    = document.getElementById('filter-meal')?.value || '';
+  const fDiet    = document.getElementById('filter-diet')?.value || '';
+
   let list = allRecipes().filter(r => {
+    if (hiddenRecipes.has(r.id)) return false;
     if (r.complexity > mc) return false;
     if (q && !r.name.toLowerCase().includes(q)) return false;
-    if (activeTags.size > 0 && ![...activeTags].every(t => r.tags.includes(t))) return false;
+    if (fCuisine && !r.tags.includes(fCuisine)) return false;
+    if (fProtein && !r.tags.includes(fProtein)) return false;
+    if (fMeal    && !r.tags.includes(fMeal))    return false;
+    if (fDiet    && !r.tags.includes(fDiet))    return false;
     if (ownedEquip.size > 0 && strict && r.equipment.some(e => !ownedEquip.has(e))) return false;
     return true;
   });
@@ -676,12 +742,12 @@ function renderCookbook() {
 
   document.getElementById('recipe-grid').innerHTML = list.map(r => {
     const me = ownedEquip.size > 0 && !strict ? r.equipment.filter(e => !ownedEquip.has(e)) : [];
-    return `<div class="recipe-card" onclick="openRecipe('${r.id}')">
-      <div class="card-thumb">${rEmoji(r)}
+    return `<div class="recipe-card">
+      <div class="card-thumb" onclick="openRecipe('${r.id}')">${rEmoji(r)}
         ${r.custom ? '<span class="custom-ribbon">Added</span>' : ''}
         ${me.length ? '<span class="equip-badge">equip needed</span>' : ''}
       </div>
-      <div class="card-body">
+      <div class="card-body" onclick="openRecipe('${r.id}')">
         <div class="card-name">${r.name}</div>
         <div class="card-tags">${r.tags.slice(0,3).map(t => `<span class="mini-tag ${tagClass(t)}">${t}</span>`).join('')}</div>
         <div class="card-meta">
@@ -690,6 +756,7 @@ function renderCookbook() {
           ${r.servings ? `<span>· ${r.servings} srv</span>` : ''}
         </div>
       </div>
+      <button class="card-hide-btn" onclick="hideRecipe('${r.id}',${JSON.stringify(r.name)})" title="Hide this recipe">✕</button>
     </div>`;
   }).join('');
 }
@@ -1108,6 +1175,45 @@ function renderEquipChecklist() {
 function toggleEquip(k) { ownedEquip.has(k) ? ownedEquip.delete(k) : ownedEquip.add(k); save(); renderEquipChecklist(); updateEquipBanner(); renderCookbook(); }
 function selectAllEquip() { Object.values(EQUIP_CATS).flat().forEach(k => ownedEquip.add(k)); save(); renderEquipChecklist(); updateEquipBanner(); renderCookbook(); }
 function clearAllEquip() { ownedEquip.clear(); save(); renderEquipChecklist(); updateEquipBanner(); renderCookbook(); }
+
+function hideRecipe(id, name) {
+  hiddenRecipes.add(id);
+  save();
+  renderCookbook();
+  renderHiddenList();
+}
+
+function restoreRecipe(id) {
+  hiddenRecipes.delete(id);
+  save();
+  renderCookbook();
+  renderHiddenList();
+}
+
+function restoreAllRecipes() {
+  hiddenRecipes.clear();
+  save();
+  renderCookbook();
+  renderHiddenList();
+}
+
+function renderHiddenList() {
+  const sec = document.getElementById('hidden-section');
+  const lst = document.getElementById('hidden-list');
+  const cnt = document.getElementById('hidden-count');
+  if (!sec) return;
+  const hiddenBase = BASE_RECIPES.filter(r => hiddenRecipes.has(r.id));
+  if (!hiddenBase.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  if (cnt) cnt.textContent = hiddenBase.length + ' hidden';
+  lst.innerHTML = hiddenBase.map(r =>
+    `<div class="hidden-row">
+      <span class="hidden-emoji">${rEmoji(r)}</span>
+      <span class="hidden-name">${r.name}</span>
+      <button class="restore-btn" onclick="restoreRecipe('${r.id}')">Restore</button>
+    </div>`
+  ).join('');
+}
 
 async function pasteFromClipboard() {
   const btn = document.getElementById('clipboard-btn');
